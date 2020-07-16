@@ -1,0 +1,87 @@
+#### Imports ####
+
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+
+
+
+#### Joao Inverno API test area #### 
+
+list_stock=["ZM","ZOOM"]#,"APPL","GOOGL","AMZN","MSFT","NVDA"]
+
+
+url="https://www.alphavantage.co/query?"
+
+daily_stock_df=pd.DataFrame()
+stocks=[]
+for stock in list_stock:
+
+    stocks.append(stock)
+    inputs = {
+        "function" : "TIME_SERIES_DAILY",
+        "symbol" : str(stock),
+        "apikey": "KS1FKWJ9GC7F1M5Z",
+        "outputsize": "full"
+    }
+    response = requests.get("https://www.alphavantage.co/query",inputs)
+    
+    
+    soup_df=pd.DataFrame(response.json()['Time Series (Daily)']).T
+    soup_df.reset_index(inplace=True)
+    
+    soup_df_sort=soup_df.sort_values(by=["index"],ignore_index=True)
+    cols=soup_df_sort.columns.drop("index")
+    df_temp=soup_df_sort[cols].apply(pd.to_numeric)
+    df_temp["Date"]=soup_df_sort["index"]
+    stockl=[str(stock) for i in df_temp.index]
+    df_temp["Stock"]=pd.DataFrame(stockl)
+    
+    soup_df_sort=df_temp[['Stock','Date','1. open', '2. high', '3. low', '4. close', '5. volume']]
+    daily_stock_df=daily_stock_df.append(soup_df_sort, ignore_index=True)
+daily_stock_df.reset_index(drop=True, inplace=True)
+
+print(stocks)
+#### Rafael Mello API  test area #### 
+
+
+
+
+
+
+#### Graphs area #### 
+
+Date1="2020-03-01"
+Date2="2020-05-01"
+
+xx=daily_stock_df[(daily_stock_df["Stock"]=="ZM") & (daily_stock_df["Date"]>Date1) & (daily_stock_df["Date"]<Date2)]
+xx.reset_index(drop=True, inplace=True)
+yy=daily_stock_df[(daily_stock_df["Stock"]=="ZOOM") & (daily_stock_df["Date"]>Date1) & (daily_stock_df["Date"]<Date2)]
+yy.reset_index(drop=True, inplace=True)
+merged=xx.merge(yy, on="Date")
+
+
+fig=plt.figure(figsize = (15,5))
+plt.plot(merged["Date"],merged["4. close_x"],'b--') #ZM
+plt.plot(merged["Date"],merged["4. close_y"],'r--')
+
+ymax = max(yy["4. close_y"])
+xpos = (yy["4. close_y").index(ymax)
+xmax = x[xpos]
+
+ax.annotate('local max', xy=(xmax, ymax), xytext=(xmax, ymax+5),
+            arrowprops=dict(facecolor='black', shrink=0.05),
+            )
+
+ax.set_ylim(0,20)
+
+plt.show()
+
+
+
+
+

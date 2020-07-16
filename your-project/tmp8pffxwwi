@@ -1,0 +1,55 @@
+#### Imports ####
+
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import matplotlib as plt
+
+
+
+
+
+#### Joao Inverno API test ar"ea #### 
+
+
+
+
+url="https://www.alphavantage.co/query?"
+
+
+"""https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&apikey=demo"""
+
+
+inputs = {
+    "function" : "TIME_SERIES_DAILY",
+    "symbol" : "ZM",
+    "apikey": "KS1FKWJ9GC7F1M5Z"
+}
+
+response=requests.get(url,inputs)
+
+print(response)
+
+response = requests.get("https://www.alphavantage.co/query",inputs)
+
+
+#soup= BeautifulSoup(response.content, features= "lxml")
+
+soup_df=pd.DataFrame(response.json()['Time Series (Daily)']).T
+
+
+
+#### Rafael Mello API  test area #### 
+
+
+
+
+
+
+#### Graphs area #### 
+
+
+
+
+
+
